@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>License Plate Recognition</title>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h2 class="text-center">License Plate Recognition</h2>
+      <div class="my-4">
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="licensePlateImage" accept="image/*">
+          <label class="custom-file-label" for="licensePlateImage">choose image</label>
+        </div>
+        <button class="btn btn-primary mt-3" id="submit">submit</button>
+      </div>
+      <h3>Result</h3>
+      <div id="result" class="alert alert-info">none</div>
+      <!-- 显示生成的图片 -->
+      <h3>Original Image</h3>
+      <img id="originalImage" src="" alt="Original Image" style="display: none;">
+      <h3>Generated Image</h3>
+      <img id="generatedImage" src="" alt="Generated Image" style="display: none;">
+      <!-- <h3>imgPlate Image</h3>
+      <img id="imgPateImage" src="" alt="imgPlate Image" style="display: none;">
+      <h3>imgThresh Image</h3>
+      <img id="imgThreshImage" src="" alt="imgThresh Image" style="display: none;"> -->
+    </div>
+
+    <!-- Optional JavaScript -->
+    <script>
+      document.getElementById('submit').addEventListener('click', function () {
+        var fileInput = document.getElementById('licensePlateImage');
+        var file = fileInput.files[0];
+        var formData = new FormData();
+        formData.append("image", file);
+
+        fetch('/upload', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          // 在这里处理服务器返回的结果
+          // 将结果显示到网页上:
+          document.getElementById('result').textContent = 'Result: ' + data.result;
+
+          // 显示生成的图片
+          // document.getElementById('generatedImage').src = 'static/uploads/' + file.name;
+          // document.getElementById('generatedImage').style.display = 'block';
+          document.getElementById('originalImage').src = data.original_image_path;
+          document.getElementById('generatedImage').src = data.generated_image_path;
+          // document.getElementById('imgPateImage').src = data.imgPlate_path;
+          // document.getElementById('imgThreshImage').src = data.imgThresh_path;
+          
+          document.getElementById('originalImage').style.display = 'block';
+          document.getElementById('generatedImage').style.display = 'block';
+          // document.getElementById('imgPateImage').style.display = 'block';
+          // document.getElementById('imgThreshImage').style.display = 'block';
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+
+      document.getElementById('licensePlateImage').addEventListener('change', function () {
+        // 当用户选择一个新的文件时，更新标签的文字
+        var fileName = this.files[0].name;
+        var label = document.querySelector("label[for='licensePlateImage']");
+        label.textContent = fileName;
+      });
+    </script>
+  </body>
+</html>
